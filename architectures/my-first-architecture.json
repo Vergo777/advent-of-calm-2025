@@ -31,7 +31,67 @@
           "url": "https://auth.platform.local/api/v1"
         }
       ]
+    },
+    {
+      "unique-id": "auth-database",
+      "node-type": "database",
+      "name": "Authentication Database",
+      "description": "Stores user credentials, session tokens, and authentication logs for the authentication service",
+      "metadata": {
+        "version": "1.0.0",
+        "type": "PostgreSQL",
+        "data-classification": "sensitive",
+        "backup-frequency": "hourly"
+      }
+    },
+    {
+      "unique-id": "customer",
+      "node-type": "actor",
+      "name": "Customer",
+      "description": "End user or customer who authenticates with the platform to access protected resources"
+    },
+    {
+      "unique-id": "auth-system",
+      "node-type": "system",
+      "name": "Authentication System",
+      "description": "Complete authentication system comprising the service and its supporting database infrastructure"
     }
   ],
-  "relationships": []
+  "relationships": [
+    {
+      "unique-id": "auth-service-to-database",
+      "description": "Reads and writes user credentials and session data to",
+      "relationship-type": {
+        "connects": {
+          "source": {
+            "node": "auth-service"
+          },
+          "destination": {
+            "node": "auth-database"
+          }
+        }
+      },
+      "protocol": "JDBC"
+    },
+    {
+      "unique-id": "customer-uses-auth-service",
+      "description": "Authenticates with the service to access the platform",
+      "relationship-type": {
+        "interacts": {
+          "actor": "customer",
+          "nodes": ["auth-service"]
+        }
+      }
+    },
+    {
+      "unique-id": "auth-system-composed",
+      "description": "Contains the authentication service and database components",
+      "relationship-type": {
+        "composed-of": {
+          "container": "auth-system",
+          "nodes": ["auth-service", "auth-database"]
+        }
+      }
+    }
+  ]
 }
