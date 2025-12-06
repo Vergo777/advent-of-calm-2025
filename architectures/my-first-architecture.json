@@ -1,0 +1,37 @@
+{
+  "$schema": "https://calm.finos.org/release/1.1/meta/calm.json",
+  "unique-id": "customer-auth-system",
+  "name": "Customer Authentication Service",
+  "description": "A service that validates user credentials and manages session tokens for secure customer access across the platform",
+  "metadata": [
+    {
+      "version": "1.0.0",
+      "created-date": "2025-12-06",
+      "owner": "Security Team",
+      "environment": "production",
+      "criticality": "high"
+    }
+  ],
+  "nodes": [
+    {
+      "unique-id": "auth-service",
+      "node-type": "service",
+      "name": "Authentication Service",
+      "description": "Validates customer credentials and manages session tokens. Provides OAuth 2.0 and JWT-based authentication for secure API access.",
+      "metadata": {
+        "version": "2.1.0",
+        "runtime": "Java 17",
+        "framework": "Spring Security",
+        "protocol": "HTTPS",
+        "data-classification": "sensitive"
+      },
+      "interfaces": [
+        {
+          "unique-id": "auth-api-endpoint",
+          "url": "https://auth.platform.local/api/v1"
+        }
+      ]
+    }
+  ],
+  "relationships": []
+}
