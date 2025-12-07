@@ -1,0 +1,322 @@
+{
+  "$schema": "https://calm.finos.org/release/1.1/meta/calm.json",
+  "unique-id": "ecommerce-platform",
+  "name": "E-Commerce Order Processing Platform",
+  "description": "A comprehensive microservices-based e-commerce platform for managing customer orders, inventory, and payments with secure API gateway routing and data persistence",
+  "metadata": {
+    "owner": "ecommerce-team@example.com",
+    "version": "1.0.0",
+    "created": "2025-12-07",
+    "description": "E-commerce order processing platform",
+    "tags": ["ecommerce", "microservices", "orders"]
+  },
+  "nodes": [
+    {
+      "unique-id": "customer",
+      "node-type": "actor",
+      "name": "Customer",
+      "description": "End user who browses products, places orders, and manages purchases through the e-commerce platform"
+    },
+    {
+      "unique-id": "admin",
+      "node-type": "actor",
+      "name": "Administrator",
+      "description": "System administrator who manages inventory, monitors orders, and performs system maintenance"
+    },
+    {
+      "unique-id": "api-gateway",
+      "node-type": "service",
+      "name": "API Gateway",
+      "description": "Centralized entry point for all client requests, handling routing, authentication, rate limiting, and load balancing across microservices",
+      "metadata": {
+        "version": "1.5.0",
+        "framework": "Kong",
+        "protocol": "HTTPS",
+        "data-classification": "public",
+        "tech-owner": "Platform Engineering Team",
+        "repository": "https://github.com/example-org/api-gateway",
+        "deployment-type": "container",
+        "sla-tier": "tier-1"
+      },
+      "interfaces": [
+        {
+          "unique-id": "api-gateway-endpoint",
+          "protocol": "HTTPS",
+          "host": "api.ecommerce.example.com",
+          "port": 443,
+          "path": "/api/v1"
+        }
+      ]
+    },
+    {
+      "unique-id": "order-service",
+      "node-type": "service",
+      "name": "Order Service",
+      "description": "Manages order creation, processing, status tracking, and order history for customers",
+      "metadata": {
+        "version": "2.0.0",
+        "runtime": "Java 17",
+        "framework": "Spring Boot",
+        "protocol": "HTTPS",
+        "data-classification": "sensitive",
+        "tech-owner": "Order Management Team",
+        "repository": "https://github.com/example-org/order-service",
+        "deployment-type": "container",
+        "sla-tier": "tier-1"
+      },
+      "interfaces": [
+        {
+          "unique-id": "order-service-api",
+          "protocol": "HTTPS",
+          "host": "orders.internal.example.com",
+          "port": 8443,
+          "path": "/api/orders"
+        }
+      ]
+    },
+    {
+      "unique-id": "inventory-service",
+      "node-type": "service",
+      "name": "Inventory Service",
+      "description": "Manages product inventory, stock levels, warehouse locations, and inventory synchronization across channels",
+      "metadata": {
+        "version": "1.8.0",
+        "runtime": "Node.js 18",
+        "framework": "Express",
+        "protocol": "HTTPS",
+        "data-classification": "sensitive",
+        "tech-owner": "Inventory Team",
+        "repository": "https://github.com/example-org/inventory-service",
+        "deployment-type": "container",
+        "sla-tier": "tier-2"
+      },
+      "interfaces": [
+        {
+          "unique-id": "inventory-service-api",
+          "protocol": "HTTPS",
+          "host": "inventory.internal.example.com",
+          "port": 8443,
+          "path": "/api/inventory"
+        }
+      ]
+    },
+    {
+      "unique-id": "payment-service",
+      "node-type": "service",
+      "name": "Payment Service",
+      "description": "Handles payment processing, PCI compliance, payment gateway integration, and transaction security for all customer payments",
+      "metadata": {
+        "version": "3.1.0",
+        "runtime": "Go 1.20",
+        "protocol": "HTTPS",
+        "data-classification": "highly-sensitive",
+        "tech-owner": "Payment & Finance Team",
+        "repository": "https://github.com/example-org/payment-service",
+        "deployment-type": "container",
+        "sla-tier": "tier-1",
+        "compliance": "PCI-DSS Level 1"
+      },
+      "interfaces": [
+        {
+          "unique-id": "payment-service-api",
+          "protocol": "HTTPS",
+          "host": "payments.internal.example.com",
+          "port": 8443,
+          "path": "/api/payments"
+        }
+      ]
+    },
+    {
+      "unique-id": "order-database",
+      "node-type": "database",
+      "name": "Order Database",
+      "description": "Primary database storing order records, customer order history, order status, and transaction details",
+      "metadata": {
+        "version": "14.0",
+        "type": "PostgreSQL",
+        "data-classification": "sensitive",
+        "backup-frequency": "daily",
+        "replication": "multi-region"
+      },
+      "interfaces": [
+        {
+          "unique-id": "order-db-connection",
+          "protocol": "JDBC",
+          "host": "postgres-orders.db.internal.example.com",
+          "port": 5432,
+          "database": "orders_db"
+        }
+      ]
+    },
+    {
+      "unique-id": "inventory-database",
+      "node-type": "database",
+      "name": "Inventory Database",
+      "description": "Database for storing product catalog, stock levels, warehouse assignments, and inventory transactions",
+      "metadata": {
+        "version": "6.0",
+        "type": "MongoDB",
+        "data-classification": "sensitive",
+        "backup-frequency": "daily",
+        "replication": "sharded"
+      },
+      "interfaces": [
+        {
+          "unique-id": "inventory-db-connection",
+          "protocol": "TCP",
+          "host": "mongo-inventory.db.internal.example.com",
+          "port": 27017,
+          "database": "inventory_db"
+        }
+      ]
+    },
+    {
+      "unique-id": "ecommerce-system",
+      "node-type": "system",
+      "name": "E-Commerce Platform",
+      "description": "Complete e-commerce platform encompassing API gateway, order processing, inventory management, and payment services with supporting databases"
+    }
+  ],
+  "relationships": [
+    {
+      "unique-id": "customer-uses-api-gateway",
+      "description": "Initiates requests through the API gateway to access platform services",
+      "relationship-type": {
+        "interacts": {
+          "actor": "customer",
+          "nodes": ["api-gateway"]
+        }
+      }
+    },
+    {
+      "unique-id": "admin-uses-api-gateway",
+      "description": "Accesses system administration functions through the API gateway",
+      "relationship-type": {
+        "interacts": {
+          "actor": "admin",
+          "nodes": ["api-gateway"]
+        }
+      }
+    },
+    {
+      "unique-id": "api-gateway-to-order-service",
+      "description": "Routes order requests to the order service for processing",
+      "relationship-type": {
+        "connects": {
+          "source": {
+            "node": "api-gateway",
+            "interfaces": ["api-gateway-endpoint"]
+          },
+          "destination": {
+            "node": "order-service",
+            "interfaces": ["order-service-api"]
+          }
+        }
+      },
+      "protocol": "HTTPS",
+      "metadata": {
+        "latency-sla": "< 200ms",
+        "monitoring": true,
+        "circuit-breaker": true
+      }
+    },
+    {
+      "unique-id": "api-gateway-to-inventory-service",
+      "description": "Routes inventory requests to the inventory service",
+      "relationship-type": {
+        "connects": {
+          "source": {
+            "node": "api-gateway",
+            "interfaces": ["api-gateway-endpoint"]
+          },
+          "destination": {
+            "node": "inventory-service",
+            "interfaces": ["inventory-service-api"]
+          }
+        }
+      },
+      "protocol": "HTTPS",
+      "metadata": {
+        "latency-sla": "< 300ms",
+        "monitoring": true,
+        "circuit-breaker": true
+      }
+    },
+    {
+      "unique-id": "order-service-to-order-database",
+      "description": "Reads and writes order data to the order database",
+      "relationship-type": {
+        "connects": {
+          "source": {
+            "node": "order-service",
+            "interfaces": ["order-service-api"]
+          },
+          "destination": {
+            "node": "order-database",
+            "interfaces": ["order-db-connection"]
+          }
+        }
+      },
+      "protocol": "JDBC",
+      "metadata": {
+        "latency-sla": "< 100ms",
+        "monitoring": true,
+        "connection-pooling": true
+      }
+    },
+    {
+      "unique-id": "inventory-service-to-inventory-database",
+      "description": "Reads and writes inventory data to the inventory database",
+      "relationship-type": {
+        "connects": {
+          "source": {
+            "node": "inventory-service",
+            "interfaces": ["inventory-service-api"]
+          },
+          "destination": {
+            "node": "inventory-database",
+            "interfaces": ["inventory-db-connection"]
+          }
+        }
+      },
+      "protocol": "TCP",
+      "metadata": {
+        "latency-sla": "< 150ms",
+        "monitoring": true,
+        "connection-pooling": true
+      }
+    },
+    {
+      "unique-id": "order-service-to-payment-service",
+      "description": "Requests payment processing for confirmed orders",
+      "relationship-type": {
+        "connects": {
+          "source": {
+            "node": "order-service",
+            "interfaces": ["order-service-api"]
+          },
+          "destination": {
+            "node": "payment-service",
+            "interfaces": ["payment-service-api"]
+          }
+        }
+      },
+      "protocol": "HTTPS",
+      "metadata": {
+        "latency-sla": "< 500ms",
+        "monitoring": true,
+        "encryption": "TLS 1.3"
+      }
+    },
+    {
+      "unique-id": "ecommerce-system-composed-of",
+      "description": "Contains all core platform services and supporting infrastructure",
+      "relationship-type": {
+        "composed-of": {
+          "container": "ecommerce-system",
+          "nodes": ["api-gateway", "order-service", "inventory-service", "payment-service", "order-database", "inventory-database"]
+        }
+      }
+    }
+  ]
+}
