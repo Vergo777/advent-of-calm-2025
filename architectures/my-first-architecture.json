@@ -28,7 +28,10 @@
       "interfaces": [
         {
           "unique-id": "auth-api-endpoint",
-          "url": "https://auth.platform.local/api/v1"
+          "protocol": "HTTPS",
+          "host": "api.example.com",
+          "port": 443,
+          "path": "/api/v1"
         }
       ]
     },
@@ -42,7 +45,16 @@
         "type": "PostgreSQL",
         "data-classification": "sensitive",
         "backup-frequency": "hourly"
-      }
+      },
+      "interfaces": [
+        {
+          "unique-id": "auth-db-connection",
+          "protocol": "JDBC",
+          "host": "db.example.com",
+          "port": 5432,
+          "database": "auth_db"
+        }
+      ]
     },
     {
       "unique-id": "customer",
@@ -64,10 +76,12 @@
       "relationship-type": {
         "connects": {
           "source": {
-            "node": "auth-service"
+            "node": "auth-service",
+            "interfaces": ["auth-api-endpoint"]
           },
           "destination": {
-            "node": "auth-database"
+            "node": "auth-database",
+            "interfaces": ["auth-db-connection"]
           }
         }
       },
