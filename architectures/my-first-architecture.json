@@ -3,15 +3,13 @@
   "unique-id": "customer-auth-system",
   "name": "Customer Authentication Service",
   "description": "A service that validates user credentials and manages session tokens for secure customer access across the platform",
-  "metadata": [
-    {
-      "version": "1.0.0",
-      "created-date": "2025-12-06",
-      "owner": "Security Team",
-      "environment": "production",
-      "criticality": "high"
-    }
-  ],
+  "metadata": {
+    "owner": "security-team@example.com",
+    "version": "1.0.0",
+    "created": "2025-12-07",
+    "description": "A customer authentication and session management system that provides OAuth 2.0 and JWT-based authentication for secure platform access across multiple services",
+    "tags": ["learning", "authentication", "demo"]
+  },
   "nodes": [
     {
       "unique-id": "auth-service",
@@ -23,7 +21,11 @@
         "runtime": "Java 17",
         "framework": "Spring Security",
         "protocol": "HTTPS",
-        "data-classification": "sensitive"
+        "data-classification": "sensitive",
+        "tech-owner": "Security Engineering Team",
+        "repository": "https://github.com/example-org/customer-auth-service",
+        "deployment-type": "container",
+        "sla-tier": "tier-1"
       },
       "interfaces": [
         {
@@ -85,7 +87,12 @@
           }
         }
       },
-      "protocol": "JDBC"
+      "protocol": "JDBC",
+      "metadata": {
+        "latency-sla": "< 100ms",
+        "monitoring": true,
+        "circuit-breaker": true
+      }
     },
     {
       "unique-id": "customer-uses-auth-service",
