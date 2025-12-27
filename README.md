@@ -13,7 +13,9 @@ This repository tracks my 24-day journey learning the Common Architecture Langua
 - [x] Day 7: Build Complete E-Commerce Architecture
 - [x] Day 8: Add Controls for Non-Functional Requirements
     - Added security, compliance, and performance controls. See the [Controls Guide](docs/controls-guide.md) for details.
-- [ ] Day 9: ...
+- [x] Day 9: Model a Business Flow
+    - Modeled order processing and inventory check flows with audit controls. See the [Business Flows Guide](docs/flows-guide.md) for details.
+- [ ] Day 10: ...
 
 ## Tools
 
