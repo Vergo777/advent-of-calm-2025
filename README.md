@@ -15,7 +15,9 @@ This repository tracks my 24-day journey learning the Common Architecture Langua
     - Added security, compliance, and performance controls. See the [Controls Guide](docs/controls-guide.md) for details.
 - [x] Day 9: Model a Business Flow
     - Modeled order processing and inventory check flows with audit controls. See the [Business Flows Guide](docs/flows-guide.md) for details.
-- [ ] Day 10: ...
+- [x] Day 10: Link to an ADR
+    - Linked Architecture Decision Records (ADRs) to the platform architecture to provide historical context for key design choices. See the [ADR Index](docs/adr/README.md) for details.
+- [ ] Day 11: ...
 
 ## Tools
 
