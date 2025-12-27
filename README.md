@@ -23,7 +23,8 @@ This repository tracks my 24-day journey learning the Common Architecture Langua
     - Created a specialized architecture summary using CALM widgets (tables, Mermaid diagrams, and focused views). See [Architecture Summary](docs/architecture-summary.md).
 - [x] Day 13: Custom Documentation with Handlebars Templates
     - Learned how to use raw Handlebars for advanced filtering and custom formatting. Created specialized [Node Inventory](docs/generated/node-inventory.md) and [Relationship Details](docs/generated/relationship-details.md) reports.
-- [ ] Day 14: ...
+- [x] Day 14: Use CALM as Your Expert Architecture Advisor
+    - Conducted an AI-assisted resilience review and implemented critical improvements: API Gateway redundancy, database replication, and asynchronous processing. See [Architecture Improvements](docs/architecture-improvements.md) for the full breakdown.
 
 ## Tools
 

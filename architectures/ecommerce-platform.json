@@ -50,6 +50,18 @@
           "config-url": "https://configs.example.com/infra/ha-config.yaml"
         }
       ]
+    },
+    "resilience": {
+      "description": "System-wide resilience and availability requirements",
+      "requirements": [
+        {
+          "requirement-url": "https://internal-policy.example.com/resilience/high-availability",
+          "config": {
+            "uptime-percentage": 99.9,
+            "sla-category": "critical"
+          }
+        }
+      ]
     }
   },
   "flows": [
@@ -59,21 +71,33 @@
       "description": "End-to-end flow from customer placing an order to payment confirmation",
       "transitions": [
         {
-          "relationship-unique-id": "customer-uses-api-gateway",
+          "relationship-unique-id": "customer-to-load-balancer",
           "sequence-number": 1,
           "description": "Customer submits order via web interface",
           "direction": "source-to-destination"
         },
         {
-          "relationship-unique-id": "api-gateway-to-order-service",
+          "relationship-unique-id": "load-balancer-to-gateway-1",
           "sequence-number": 2,
+          "description": "Load balancer forwards to Gateway 1",
+          "direction": "source-to-destination"
+        },
+        {
+          "relationship-unique-id": "api-gateway-1-to-order-service",
+          "sequence-number": 3,
           "description": "API Gateway routes order to Order Service",
           "direction": "source-to-destination"
         },
         {
-          "relationship-unique-id": "order-service-to-payment-service",
-          "sequence-number": 3,
-          "description": "Order Service initiates payment processing",
+          "relationship-unique-id": "order-service-to-order-queue",
+          "sequence-number": 4,
+          "description": "Order Service publishes payment request to queue",
+          "direction": "source-to-destination"
+        },
+        {
+          "relationship-unique-id": "order-queue-to-payment-service",
+          "sequence-number": 5,
+          "description": "Payment Service consumes payment request from queue",
           "direction": "source-to-destination"
         }
       ],
@@ -98,32 +122,38 @@
       "description": "Admin checks and updates inventory stock levels",
       "transitions": [
         {
-          "relationship-unique-id": "admin-uses-api-gateway",
+          "relationship-unique-id": "admin-to-load-balancer",
           "sequence-number": 1,
           "description": "Admin requests inventory status",
           "direction": "source-to-destination"
         },
         {
-          "relationship-unique-id": "api-gateway-to-inventory-service",
+          "relationship-unique-id": "load-balancer-to-gateway-2",
           "sequence-number": 2,
+          "description": "Load balancer forwards to Gateway 2",
+          "direction": "source-to-destination"
+        },
+        {
+          "relationship-unique-id": "api-gateway-2-to-inventory-service",
+          "sequence-number": 3,
           "description": "Route to inventory service",
           "direction": "source-to-destination"
         },
         {
           "relationship-unique-id": "inventory-service-to-inventory-database",
-          "sequence-number": 3,
+          "sequence-number": 4,
           "description": "Query current stock levels",
           "direction": "source-to-destination"
         },
         {
           "relationship-unique-id": "inventory-service-to-inventory-database",
-          "sequence-number": 4,
+          "sequence-number": 5,
           "description": "Return stock data",
           "direction": "destination-to-source"
         },
         {
-          "relationship-unique-id": "api-gateway-to-inventory-service",
-          "sequence-number": 5,
+          "relationship-unique-id": "api-gateway-2-to-inventory-service",
+          "sequence-number": 6,
           "description": "Return inventory report",
           "direction": "destination-to-source"
         }
@@ -144,47 +174,64 @@
       "description": "System administrator who manages inventory, monitors orders, and performs system maintenance"
     },
     {
-      "unique-id": "api-gateway",
+      "unique-id": "load-balancer",
       "node-type": "service",
-      "name": "API Gateway",
-      "description": "Centralized entry point for all client requests, handling routing, authentication, rate limiting, and load balancing across microservices",
+      "name": "Global Load Balancer",
+      "description": "High-availability entry point that distributes traffic across multiple API Gateway instances",
       "metadata": {
-        "version": "1.5.0",
-        "framework": "Kong",
-        "protocol": "HTTPS",
-        "data-classification": "public",
-        "tech-owner": "Platform Engineering Team",
-        "repository": "https://github.com/example-org/api-gateway",
-        "deployment-type": "container",
-        "sla-tier": "tier-1"
+        "ha-tier": "tier-1",
+        "load-balancing-algorithm": "round-robin",
+        "redundancy": "active-active"
       },
       "interfaces": [
         {
-          "unique-id": "api-gateway-endpoint",
+          "unique-id": "lb-endpoint",
           "protocol": "HTTPS",
           "host": "api.ecommerce.example.com",
           "port": 443,
-          "path": "/api/v1"
+          "path": "/"
         }
-      ],
-      "controls": {
-        "performance": {
-          "description": "API Gateway rate limiting and caching requirements",
-          "requirements": [
-            {
-              "requirement-url": "https://internal-policy.example.com/performance/rate-limiting",
-              "config-url": "https://configs.example.com/gateway/rate-limits.yaml"
-            },
-            {
-              "requirement-url": "https://internal-policy.example.com/performance/caching-policy",
-              "config": {
-                "default-ttl-seconds": 300,
-                "cache-control": "private"
-              }
-            }
-          ]
+      ]
+    },
+    {
+      "unique-id": "api-gateway-1",
+      "node-type": "service",
+      "name": "API Gateway - Instance 1",
+      "description": "Primary API Gateway instance handling routing and authentication",
+      "metadata": {
+        "version": "1.5.0",
+        "framework": "Kong",
+        "ha-tier": "tier-1",
+        "redundancy": "active-active"
+      },
+      "interfaces": [
+        {
+          "unique-id": "gateway-1-endpoint",
+          "protocol": "HTTPS",
+          "host": "gw-1.internal.example.com",
+          "port": 8443
         }
-      }
+      ]
+    },
+    {
+      "unique-id": "api-gateway-2",
+      "node-type": "service",
+      "name": "API Gateway - Instance 2",
+      "description": "Secondary API Gateway instance for high availability",
+      "metadata": {
+        "version": "1.5.0",
+        "framework": "Kong",
+        "ha-tier": "tier-1",
+        "redundancy": "active-active"
+      },
+      "interfaces": [
+        {
+          "unique-id": "gateway-2-endpoint",
+          "protocol": "HTTPS",
+          "host": "gw-2.internal.example.com",
+          "port": 8443
+        }
+      ]
     },
     {
       "unique-id": "order-service",
@@ -210,7 +257,22 @@
           "port": 8443,
           "path": "/api/orders"
         }
-      ]
+      ],
+      "controls": {
+        "resilience": {
+          "description": "Fault tolerance and self-healing requirements for the order service",
+          "requirements": [
+            {
+              "requirement-url": "https://internal-policy.example.com/resilience/circuit-breaker",
+              "config": {
+                "failure-rate-threshold-percentage": 50,
+                "wait-duration-in-open-state-seconds": 10,
+                "permitted-number-of-calls-in-half-open-state": 10
+              }
+            }
+          ]
+        }
+      }
     },
     {
       "unique-id": "inventory-service",
@@ -276,26 +338,103 @@
       }
     },
     {
-      "unique-id": "order-database",
+      "unique-id": "order-database-cluster",
+      "node-type": "system",
+      "name": "Order Database Cluster",
+      "description": "High-availability PostgreSQL cluster with primary-replica replication for data durability and read scalability",
+      "metadata": {
+        "ha-mode": "primary-replica",
+        "replication-type": "asynchronous"
+      },
+      "controls": {
+        "resilience": {
+          "description": "Failover and data recovery requirements for the database cluster",
+          "requirements": [
+            {
+              "requirement-url": "https://internal-policy.example.com/resilience/failover",
+              "config": {
+                "recovery-time-objective-minutes": 15,
+                "recovery-point-objective-minutes": 5,
+                "automatic-failover": true
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "unique-id": "order-database-primary",
       "node-type": "database",
-      "name": "Order Database",
-      "description": "Primary database storing order records, customer order history, order status, and transaction details",
+      "name": "Order Database (Primary)",
+      "description": "Primary database instance handling all write operations and serving as the source for replication",
       "metadata": {
         "version": "14.0",
         "type": "PostgreSQL",
+        "role": "primary",
         "data-classification": "sensitive",
         "backup-frequency": "daily",
-        "replication": "multi-region"
+        "replication": "source"
       },
       "interfaces": [
         {
-          "unique-id": "order-db-connection",
+          "unique-id": "order-db-primary-connection",
           "protocol": "JDBC",
-          "host": "postgres-orders.db.internal.example.com",
+          "host": "postgres-primary.db.internal.example.com",
           "port": 5432,
           "database": "orders_db"
         }
       ]
+    },
+    {
+      "unique-id": "order-database-replica",
+      "node-type": "database",
+      "name": "Order Database (Replica)",
+      "description": "Read-only replica instance for scaling read operations and providing failover capacity",
+      "metadata": {
+        "version": "14.0",
+        "type": "PostgreSQL",
+        "role": "replica",
+        "replication-mode": "async",
+        "data-classification": "sensitive"
+      },
+      "interfaces": [
+        {
+          "unique-id": "order-db-replica-connection",
+          "protocol": "JDBC",
+          "host": "postgres-replica.db.internal.example.com",
+          "port": 5432,
+          "database": "orders_db"
+        }
+      ]
+    },
+    {
+      "unique-id": "message-broker",
+      "node-type": "system",
+      "name": "Message Broker (RabbitMQ)",
+      "description": "Centralized message broker for asynchronous communication between services",
+      "metadata": {
+        "adr": "docs/adr/0001-use-message-queue-for-async-processing.md",
+        "tech-stack": "RabbitMQ",
+        "ha-mode": "mirrored-queues"
+      },
+      "interfaces": [
+        {
+          "unique-id": "amqp-interface",
+          "protocol": "AMQP",
+          "port": 5672,
+          "description": "AMQP 0-9-1 endpoint"
+        }
+      ]
+    },
+    {
+      "unique-id": "order-queue",
+      "node-type": "node",
+      "name": "Order Payment Queue",
+      "description": "Durable queue for storing payment processing requests",
+      "metadata": {
+        "adr": "docs/adr/0001-use-message-queue-for-async-processing.md",
+        "durability": "persistent"
+      }
     },
     {
       "unique-id": "inventory-database",
@@ -328,38 +467,78 @@
   ],
   "relationships": [
     {
-      "unique-id": "customer-uses-api-gateway",
-      "description": "Initiates requests through the API gateway to access platform services",
+      "unique-id": "customer-to-load-balancer",
+      "description": "Directs customer traffic to the global load balancer",
       "relationship-type": {
         "interacts": {
           "actor": "customer",
           "nodes": [
-            "api-gateway"
+            "load-balancer"
           ]
         }
       }
     },
     {
-      "unique-id": "admin-uses-api-gateway",
-      "description": "Accesses system administration functions through the API gateway",
+      "unique-id": "admin-to-load-balancer",
+      "description": "Directs admin traffic to the global load balancer",
       "relationship-type": {
         "interacts": {
           "actor": "admin",
           "nodes": [
-            "api-gateway"
+            "load-balancer"
           ]
         }
       }
     },
     {
-      "unique-id": "api-gateway-to-order-service",
-      "description": "Routes order requests to the order service for processing",
+      "unique-id": "load-balancer-to-gateway-1",
+      "description": "Distributes traffic to API Gateway Instance 1",
       "relationship-type": {
         "connects": {
           "source": {
-            "node": "api-gateway",
+            "node": "load-balancer",
             "interfaces": [
-              "api-gateway-endpoint"
+              "lb-endpoint"
+            ]
+          },
+          "destination": {
+            "node": "api-gateway-1",
+            "interfaces": [
+              "gateway-1-endpoint"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "unique-id": "load-balancer-to-gateway-2",
+      "description": "Distributes traffic to API Gateway Instance 2",
+      "relationship-type": {
+        "connects": {
+          "source": {
+            "node": "load-balancer",
+            "interfaces": [
+              "lb-endpoint"
+            ]
+          },
+          "destination": {
+            "node": "api-gateway-2",
+            "interfaces": [
+              "gateway-2-endpoint"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "unique-id": "api-gateway-1-to-order-service",
+      "description": "Routes order requests from Gateway 1 to the order service",
+      "relationship-type": {
+        "connects": {
+          "source": {
+            "node": "api-gateway-1",
+            "interfaces": [
+              "gateway-1-endpoint"
             ]
           },
           "destination": {
@@ -370,22 +549,17 @@
           }
         }
       },
-      "protocol": "HTTPS",
-      "metadata": {
-        "latency-sla": "< 200ms",
-        "monitoring": true,
-        "circuit-breaker": true
-      }
+      "protocol": "HTTPS"
     },
     {
-      "unique-id": "api-gateway-to-inventory-service",
-      "description": "Routes inventory requests to the inventory service",
+      "unique-id": "api-gateway-2-to-inventory-service",
+      "description": "Routes inventory requests from Gateway 2 to the inventory service",
       "relationship-type": {
         "connects": {
           "source": {
-            "node": "api-gateway",
+            "node": "api-gateway-2",
             "interfaces": [
-              "api-gateway-endpoint"
+              "gateway-2-endpoint"
             ]
           },
           "destination": {
@@ -396,16 +570,11 @@
           }
         }
       },
-      "protocol": "HTTPS",
-      "metadata": {
-        "latency-sla": "< 300ms",
-        "monitoring": true,
-        "circuit-breaker": true
-      }
+      "protocol": "HTTPS"
     },
     {
-      "unique-id": "order-service-to-order-database",
-      "description": "Reads and writes order data to the order database",
+      "unique-id": "order-service-to-order-db-primary",
+      "description": "Writes order data to the primary database",
       "relationship-type": {
         "connects": {
           "source": {
@@ -415,18 +584,55 @@
             ]
           },
           "destination": {
-            "node": "order-database",
+            "node": "order-database-primary",
             "interfaces": [
-              "order-db-connection"
+              "order-db-primary-connection"
             ]
           }
         }
       },
       "protocol": "JDBC",
       "metadata": {
-        "latency-sla": "< 100ms",
-        "monitoring": true,
-        "connection-pooling": true
+        "operation": "write",
+        "monitoring": true
+      }
+    },
+    {
+      "unique-id": "order-service-to-order-db-replica",
+      "description": "Reads order history and status from the replica database",
+      "relationship-type": {
+        "connects": {
+          "source": {
+            "node": "order-service",
+            "interfaces": [
+              "order-service-api"
+            ]
+          },
+          "destination": {
+            "node": "order-database-replica",
+            "interfaces": [
+              "order-db-replica-connection"
+            ]
+          }
+        }
+      },
+      "protocol": "JDBC",
+      "metadata": {
+        "operation": "read",
+        "monitoring": true
+      }
+    },
+    {
+      "unique-id": "order-db-cluster-composed-of",
+      "description": "Defines the nodes within the order database cluster",
+      "relationship-type": {
+        "composed-of": {
+          "container": "order-database-cluster",
+          "nodes": [
+            "order-database-primary",
+            "order-database-replica"
+          ]
+        }
       }
     },
     {
@@ -456,8 +662,8 @@
       }
     },
     {
-      "unique-id": "order-service-to-payment-service",
-      "description": "Requests payment processing for confirmed orders",
+      "unique-id": "order-service-to-order-queue",
+      "description": "Publishes payment requests to the RabbitMQ queue",
       "relationship-type": {
         "connects": {
           "source": {
@@ -467,6 +673,25 @@
             ]
           },
           "destination": {
+            "node": "order-queue"
+          }
+        }
+      },
+      "protocol": "AMQP",
+      "metadata": {
+        "adr": "docs/adr/0001-use-message-queue-for-async-processing.md",
+        "delivery-guarantee": "at-least-once"
+      }
+    },
+    {
+      "unique-id": "order-queue-to-payment-service",
+      "description": "Consumes payment requests from the RabbitMQ queue",
+      "relationship-type": {
+        "connects": {
+          "source": {
+            "node": "order-queue"
+          },
+          "destination": {
             "node": "payment-service",
             "interfaces": [
               "payment-service-api"
@@ -474,11 +699,22 @@
           }
         }
       },
-      "protocol": "HTTPS",
+      "protocol": "AMQP",
       "metadata": {
-        "latency-sla": "< 500ms",
-        "monitoring": true,
-        "encryption": "TLS 1.3"
+        "adr": "docs/adr/0001-use-message-queue-for-async-processing.md",
+        "acknowledgement": "manual"
+      }
+    },
+    {
+      "unique-id": "message-broker-composed-of",
+      "description": "Groups queues within the message broker",
+      "relationship-type": {
+        "composed-of": {
+          "container": "message-broker",
+          "nodes": [
+            "order-queue"
+          ]
+        }
       }
     },
     {
@@ -488,12 +724,15 @@
         "composed-of": {
           "container": "ecommerce-system",
           "nodes": [
-            "api-gateway",
+            "load-balancer",
+            "api-gateway-1",
+            "api-gateway-2",
             "order-service",
             "inventory-service",
             "payment-service",
-            "order-database",
-            "inventory-database"
+            "order-database-cluster",
+            "inventory-database",
+            "message-broker"
           ]
         }
       }
