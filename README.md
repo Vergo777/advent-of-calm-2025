@@ -21,7 +21,9 @@ This repository tracks my 24-day journey learning the Common Architecture Langua
     - Generated a complete Docusaurus-based documentation website using `calm docify`.
 - [x] Day 12: Custom Documentation with CALM Widgets
     - Created a specialized architecture summary using CALM widgets (tables, Mermaid diagrams, and focused views). See [Architecture Summary](docs/architecture-summary.md).
-- [ ] Day 13: ...
+- [x] Day 13: Custom Documentation with Handlebars Templates
+    - Learned how to use raw Handlebars for advanced filtering and custom formatting. Created specialized [Node Inventory](docs/generated/node-inventory.md) and [Relationship Details](docs/generated/relationship-details.md) reports.
+- [ ] Day 14: ...
 
 ## Tools
 
