@@ -17,7 +17,11 @@ This repository tracks my 24-day journey learning the Common Architecture Langua
     - Modeled order processing and inventory check flows with audit controls. See the [Business Flows Guide](docs/flows-guide.md) for details.
 - [x] Day 10: Link to an ADR
     - Linked Architecture Decision Records (ADRs) to the platform architecture to provide historical context for key design choices. See the [ADR Index](docs/adr/README.md) for details.
-- [ ] Day 11: ...
+- [x] Day 11: Share Your Architecture with a Documentation Website
+    - Generated a complete Docusaurus-based documentation website using `calm docify`.
+- [x] Day 12: Custom Documentation with CALM Widgets
+    - Created a specialized architecture summary using CALM widgets (tables, Mermaid diagrams, and focused views). See [Architecture Summary](docs/architecture-summary.md).
+- [ ] Day 13: ...
 
 ## Tools
 
