@@ -51,3 +51,40 @@ While the core structure is rigid, the following areas remain flexible for proje
 *   **Interfaces**: You are free to add network interfaces (host, port, protocol) to the nodes as your infrastructure details emerge.
 *   **Metadata**: Supplemental information like `version`, `owner`, or `repository` links can be added to any node.
 *   **Controls**: You can attach security, compliance, or residence controls to both nodes and relationships without breaking the core pattern contract.
+
+---
+
+## 🛡️ Corporate Governance: Company Base Pattern
+
+The `company-base-pattern.json` is a specialized governance-only pattern. Instead of defining *what* should be in your architecture, it defines the *rules* every component must follow.
+
+### 📋 Enforcement Rules
+This pattern enforces our organization's **Standards** across all components:
+- **Every Node** must have:
+    - `costCenter`: Formatted as `CC-XXXX`.
+    - `owner`: A designated team or individual.
+- **Every Relationship** must have:
+    - `dataClassification`: Sensitivity level (public, internal, confidential, or restricted).
+    - `encrypted`: Explicit boolean for transit security.
+
+### ⚖️ Structure vs. Property Enforcement
+
+| Feature | Web Application Pattern | Company Base Pattern |
+| :--- | :--- | :--- |
+| **Primary Goal** | Standardize **Structure** | Standardize **Compliance** |
+| **Node Count** | Fixed (exactly 3) | Infinite / Flexible |
+| **Relationship Count** | Fixed (exactly 2) | Infinite / Flexible |
+| **Enforcement** | Must have specific IDs and types | Must have specific properties |
+| **Use Case** | Bootstrapping a new 3-tier app | Auditing any existing or new system |
+
+### 🛠️ Use Cases: Which pattern to use?
+- Use **Web Application Pattern** when starting a new project to ensure you follow the standard Tier-1 stack architecture.
+- Use **Company Base Pattern** for all existing architectures to audit them for corporate governance compliance.
+
+### 🏗️ Local Standard Validation
+Since our Standards use canonical URLs that aren't yet published, you must use the **URL Mapping** file when validating locally:
+
+```bash
+calm validate -p patterns/company-base-pattern.json -a my-architecture.json -u url-mapping.json
+```
+The `-u` flag tells the validator to map the remote standard URLs (e.g., `https://example.com/standards/...`) to your local `./standards/` directory components.
