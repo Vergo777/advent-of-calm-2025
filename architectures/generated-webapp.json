@@ -1,0 +1,69 @@
+{
+  "nodes": [
+    {
+      "unique-id": "web-frontend",
+      "node-type": "webclient",
+      "name": "Web Frontend",
+      "description": "React-based web application providing the user interface."
+    },
+    {
+      "unique-id": "api-service",
+      "node-type": "service",
+      "name": "API Service",
+      "description": "RESTful API service handling business logic and data orchestration.",
+      "interfaces": [
+        {
+          "unique-id": "https-api",
+          "protocol": "HTTPS",
+          "host": "api.internal.example.com",
+          "port": 443
+        }
+      ]
+    },
+    {
+      "unique-id": "app-database",
+      "node-type": "database",
+      "name": "Application Database",
+      "description": "Relational database for persistent storage of application data.",
+      "interfaces": [
+        {
+          "unique-id": "postgres-db",
+          "protocol": "PostgreSQL",
+          "host": "db.internal.example.com",
+          "port": 5432
+        }
+      ]
+    }
+  ],
+  "relationships": [
+    {
+      "unique-id": "frontend-to-api",
+      "description": "Frontend communicates with the API service via REST.",
+      "relationship-type": {
+        "connects": {
+          "source": {
+            "node": "web-frontend"
+          },
+          "destination": {
+            "node": "api-service"
+          }
+        }
+      }
+    },
+    {
+      "unique-id": "api-to-database",
+      "description": "API service persists and retrieves data from the database.",
+      "relationship-type": {
+        "connects": {
+          "source": {
+            "node": "api-service"
+          },
+          "destination": {
+            "node": "app-database"
+          }
+        }
+      }
+    }
+  ],
+  "$schema": "https://example.com/patterns/web-app-pattern.json"
+}

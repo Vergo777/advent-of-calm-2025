@@ -25,6 +25,12 @@ This repository tracks my 24-day journey learning the Common Architecture Langua
     - Learned how to use raw Handlebars for advanced filtering and custom formatting. Created specialized [Node Inventory](docs/generated/node-inventory.md) and [Relationship Details](docs/generated/relationship-details.md) reports.
 - [x] Day 14: Use CALM as Your Expert Architecture Advisor
     - Conducted an AI-assisted resilience review and implemented critical improvements: API Gateway redundancy, database replication, and asynchronous processing. See [Architecture Improvements](docs/architecture-improvements.md) for the full breakdown.
+- [x] Day 15: Enrich Architecture with Operational Metadata
+    - Added comprehensive operational data to nodes and flows, including ownership, on-call Slack channels, health endpoints, failure modes, and business impact metadata.
+- [x] Day 16: Generate Operations Documentation with Docify
+    - Created Handlebars templates for [Service Runbooks](docs/ops/service-runbooks.md), [On-Call Reference](docs/ops/oncall-reference.md), and [Flow Support Guides](docs/ops/flow-support-guide.md) to automate documentation updates.
+- [x] Day 17: Architectural Governance with Patterns
+    - Defined a reusable [Web Application Pattern](patterns/web-app-pattern.json) to enforce 3-tier standards across new architectures. Documented the generation and validation lifecycle in the [Patterns README](patterns/README.md).
 
 ## Tools
 
