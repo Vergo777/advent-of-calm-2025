@@ -31,6 +31,8 @@ This repository tracks my 24-day journey learning the Common Architecture Langua
     - Created Handlebars templates for [Service Runbooks](docs/ops/service-runbooks.md), [On-Call Reference](docs/ops/oncall-reference.md), and [Flow Support Guides](docs/ops/flow-support-guide.md) to automate documentation updates.
 - [x] Day 17: Architectural Governance with Patterns
     - Defined a reusable [Web Application Pattern](patterns/web-app-pattern.json) to enforce 3-tier standards across new architectures. Documented the generation and validation lifecycle in the [Patterns README](patterns/README.md).
+- [x] Day 18: Enforcing Corporate Standards 
+    - Implemented [Company Node](standards/company-node-standard.json) and [Company Relationship](standards/company-relationship-standard.json) standards to enforce governance rules like cost centers, ownership, and data classification. Documented the composition approach in the [Standards README](standards/README.md).
 
 ## Tools
 

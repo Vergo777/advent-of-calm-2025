@@ -1,0 +1,38 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "title": "Company Node Standard",
+    "description": "Standard requirements for all organization-managed nodes, enforcing ownership and cost tracking.",
+    "type": "object",
+    "allOf": [
+        {
+            "$ref": "https://calm.finos.org/release/1.1/meta/core.json#/defs/node"
+        },
+        {
+            "type": "object",
+            "properties": {
+                "costCenter": {
+                    "type": "string",
+                    "pattern": "^CC-[0-9]{4}$",
+                    "description": "Internal company cost center code for budget allocation. Must follow the format CC-1234."
+                },
+                "owner": {
+                    "type": "string",
+                    "description": "The primary team or individual responsible for this node's maintenance and lifecycle."
+                },
+                "environment": {
+                    "type": "string",
+                    "enum": [
+                        "development",
+                        "staging",
+                        "production"
+                    ],
+                    "description": "The operational environment where this node is deployed."
+                }
+            },
+            "required": [
+                "costCenter",
+                "owner"
+            ]
+        }
+    ]
+}
