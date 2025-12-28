@@ -4,13 +4,19 @@
       "unique-id": "web-frontend",
       "node-type": "webclient",
       "name": "Web Frontend",
-      "description": "React-based web application providing the user interface."
+      "description": "React-based web application providing the user interface.",
+      "costCenter": "CC-1001",
+      "owner": "frontend-team",
+      "environment": "production"
     },
     {
       "unique-id": "api-service",
       "node-type": "service",
       "name": "API Service",
       "description": "RESTful API service handling business logic and data orchestration.",
+      "costCenter": "CC-2001",
+      "owner": "backend-team",
+      "environment": "production",
       "interfaces": [
         {
           "unique-id": "https-api",
@@ -25,6 +31,9 @@
       "node-type": "database",
       "name": "Application Database",
       "description": "Relational database for persistent storage of application data.",
+      "costCenter": "CC-3001",
+      "owner": "data-team",
+      "environment": "production",
       "interfaces": [
         {
           "unique-id": "postgres-db",
@@ -39,6 +48,8 @@
     {
       "unique-id": "frontend-to-api",
       "description": "Frontend communicates with the API service via REST.",
+      "dataClassification": "internal",
+      "encrypted": true,
       "relationship-type": {
         "connects": {
           "source": {
@@ -53,6 +64,8 @@
     {
       "unique-id": "api-to-database",
       "description": "API service persists and retrieves data from the database.",
+      "dataClassification": "confidential",
+      "encrypted": true,
       "relationship-type": {
         "connects": {
           "source": {

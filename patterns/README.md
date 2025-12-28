@@ -88,3 +88,34 @@ Since our Standards use canonical URLs that aren't yet published, you must use t
 calm validate -p patterns/company-base-pattern.json -a my-architecture.json -u url-mapping.json
 ```
 The `-u` flag tells the validator to map the remote standard URLs (e.g., `https://example.com/standards/...`) to your local `./standards/` directory components.
+
+---
+
+## 🏗️ Multi-Pattern Validation Strategy
+
+Our architecture governance relies on a layered validation strategy where multiple patterns work together to enforce different requirements.
+
+### 1. How Patterns Work Together
+Instead of creating a single, massive pattern that tries to enforce everything, we use a modular approach:
+- **Structural Patterns** (e.g., `web-app-pattern.json`): Enforce that an architecture has the correct components and connections for a specific use case.
+- **Standards Patterns** (e.g., `company-base-pattern.json`): Enforce that *whatever* components exist, they all contain mandatory corporate metadata (ownership, cost tracking, security classification).
+
+An architecture is considered fully compliant only when it passes **both** validation checks.
+
+### 2. Why Heterogeneous Patterns are Better
+This separation of concerns provides several benefits:
+- **Scalability**: New structural patterns (e.g., "Microservice Pattern", "Data Pipeline Pattern") can be added without duplicating corporate standard rules.
+- **Maintainability**: Changes to corporate standards (e.g., adding a new metadata field) only need to be updated in one place (the Base Pattern).
+- **Flexibility**: Teams have architectural freedom within their structural patterns while staying within the "guardrails" of corporate governance.
+
+### 3. Enabling CI/CD Governance
+This layered approach is designed for automated CI/CD pipelines:
+1. **Developer Pre-check**: Developers validate against the structural pattern locally during design.
+2. **Automated Audit**: The CI pipeline runs the `company-base-pattern` validation on every pull request to ensure no unowned or unclassified components are introduced.
+3. **Continuous Compliance**: Periodic scans run all architectures against the base pattern to catch drifted configurations or newly released corporate standards.
+
+### 4. Current Pattern Library
+| Pattern File | Type | Purpose |
+| :--- | :--- | :--- |
+| `web-app-pattern.json` | **Structural** | Mandates a 3-tier web client, service, and database stack. |
+| `company-base-pattern.json` | **Standards** | Mandates corporate ownership, finance, and security properties. |

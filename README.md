@@ -35,6 +35,8 @@ This repository tracks my 24-day journey learning the Common Architecture Langua
     - Implemented [Company Node](standards/company-node-standard.json) and [Company Relationship](standards/company-relationship-standard.json) standards to enforce governance rules like cost centers, ownership, and data classification. Documented the composition approach in the [Standards README](standards/README.md).
 - [x] Day 19: Governance-as-Code with Patterns
     - Created the [Company Base Pattern](patterns/company-base-pattern.json) to enforce Standards across all architectural models. Implemented [URL Mapping](url-mapping.json) to resolve local schemas during validation, enabling a robust local governance development workflow.
+- [x] Day 20: Layered Architecture Governance
+    - Implemented a multi-pattern validation strategy by updating the [Generated Web App](architectures/generated-webapp.json) to comply with both structural and standard patterns. Established a decoupled governance model that separates architectural structure from organizational compliance.
 
 ## Tools
 
@@ -76,6 +78,15 @@ The CLI and VSCode extension are complementary tools in your CALM workflow:
 - **CLI** handles validation and ensuring your architectures conform to the CALM schema
 - **Extension** provides visual feedback and interactive exploration of your models
 - Together, they enable a complete development experience: write and validate with the CLI, visualize and refine with the extension
+
+## Layered Architecture Governance
+
+We use a modular, multi-pattern approach to architectural governance in this repository:
+
+1.  **Structural Patterns**: Enforce the "what" (e.g., a 3-tier app must have a database).
+2.  **Standards Patterns**: Enforce the "how" (e.g., every component must have an owner and cost center).
+
+By validating architectures against multiple patterns, we ensure that projects have architectural flexibility while remaining strictly compliant with corporate policies. See the [Patterns README](patterns/README.md) for more details.
 
 ## Architectures
 
